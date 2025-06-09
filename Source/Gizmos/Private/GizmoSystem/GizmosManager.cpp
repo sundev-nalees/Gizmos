@@ -36,7 +36,7 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 	FHitResult Hit;
 	FVector End = WorldOrigin + WorldDirection * 10000;
 	GetWorld()->LineTraceSingleByChannel(Hit, WorldOrigin, End, ECC_Visibility);
-
+	DrawDebugLine(GetWorld(), WorldOrigin, End, Hit.bBlockingHit? FColor::Green : FColor::Red, false, 2.0f, 0, 1.0f);
 	if(Hit.bBlockingHit)
 	{
 		if(Hit.GetActor()->GetClass()->ImplementsInterface(UGizmoSelectableInterface::StaticClass()))
@@ -45,9 +45,10 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 			{
 				if(Interface->IsGizmoEnabled())
 				{
+					
 					SelectedActor = Hit.GetActor();
 					Gizmo->AttachToTarget(SelectedActor);
-					
+				
 				}
 			}
 		}

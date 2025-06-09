@@ -8,7 +8,7 @@
 // Sets default values
 AGizmoActors::AGizmoActors()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -23,7 +23,6 @@ AGizmoActors::AGizmoActors()
 
 	ActiveAxis = EGizmoAxis::None;
 	TargetActor = nullptr;
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Warning: Gizmo axis not set!"));
 }
 
 // Called when the game starts or when spawned
@@ -47,8 +46,9 @@ void AGizmoActors::Tick(float DeltaTime)
 
 void AGizmoActors::AttachToTarget(AActor* Target)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Hit Actor:hzxgfhs"));
 	TargetActor = Target;
-	SetActorHiddenInGame(false);
+	SetActorHiddenInGame(true);
 }
 
 void AGizmoActors::SetActiveAxis(EGizmoAxis NewAxis)
@@ -65,11 +65,12 @@ void AGizmoActors::SetupAxis(UStaticMeshComponent* Axis, FVector Direction, FLin
 {
 	
 	static  ConstructorHelpers::FObjectFinder<UStaticMesh>Mesh(TEXT("/Engine/BasicShapes/Cylinder"));
-
+	
 	if(Mesh.Succeeded())
 	{
+		
 		Axis->SetStaticMesh(Mesh.Object);
-		Axis->SetWorldScale3D(FVector(0.1f, 0.1f, 2.0f));
+		Axis->SetWorldScale3D(FVector(100.f, 100.f, 2.0f));
 		Axis->SetRelativeRotation(Direction.Rotation());
 		Axis->SetCollisionProfileName(TEXT("BlockAll"));
 		Axis->SetMobility(EComponentMobility::Movable);
