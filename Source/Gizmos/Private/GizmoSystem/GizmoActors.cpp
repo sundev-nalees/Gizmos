@@ -34,6 +34,7 @@ AGizmoActors::AGizmoActors()
 	HitBoxX->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	HitBoxX->ComponentTags.Add(FName("GizmoAxisX"));
 
+
 	AxisY->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	AxisY->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AxisY->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
@@ -47,6 +48,8 @@ AGizmoActors::AGizmoActors()
 	HitBoxY->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	HitBoxY->ComponentTags.Add(FName("GizmoAxisY"));
 
+	
+
 	AxisZ->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	AxisZ->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AxisZ->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
@@ -59,6 +62,8 @@ AGizmoActors::AGizmoActors()
 	HitBoxZ->SetCollisionResponseToAllChannels(ECR_Ignore);
 	HitBoxZ->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	HitBoxZ->ComponentTags.Add(FName("GizmoAxisZ"));
+
+	
 
 	ActiveAxis = EGizmoAxis::None;
 	TargetActor = nullptr;
@@ -105,6 +110,34 @@ void AGizmoActors::ClearAxis()
 	ActiveAxis = EGizmoAxis::None;
 }
 
+void AGizmoActors::SetAxisHighlight(EGizmoAxis Axis)
+{
+	if (AxisX) AxisX->ArrowColor = FColor::Red;
+	if (AxisY) AxisY->ArrowColor = FColor::Green;
+	if (AxisZ) AxisZ->ArrowColor = FColor::Blue;
+
+	// Highlight selected
+	switch (Axis)
+	{
+	case EGizmoAxis::X:
+		AxisX->ArrowColor = FColor::Yellow;
+		break;
+	case EGizmoAxis::Y:
+		AxisY->ArrowColor = FColor::Yellow;
+		break;
+	case EGizmoAxis::Z:
+		AxisZ->ArrowColor = FColor::Yellow;
+		break;
+	default:
+		break;
+	}
+
+	// Force update of arrow visuals
+	AxisX->MarkRenderStateDirty();
+	AxisY->MarkRenderStateDirty();
+	AxisZ->MarkRenderStateDirty();
+}
+
 void AGizmoActors::SetupAxis(UArrowComponent* Axis, const FVector& Direction, const FLinearColor& Color)	
 {
 	if (!Axis) return;
@@ -117,11 +150,6 @@ void AGizmoActors::SetupAxis(UArrowComponent* Axis, const FVector& Direction, co
 	Axis->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	Axis->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
 	Axis->SetHiddenInGame(false);
-
-	
-		
-		UE_LOG(LogTemp, Warning, TEXT("Hit Actor:hzxgfhs"));
-	
 	
 }
 

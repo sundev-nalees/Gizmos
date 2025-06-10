@@ -8,8 +8,9 @@
 #include "Components/BoxComponent.h"
 #include "GizmoActors.generated.h"
 
-UENUM()
 
+
+UENUM()
 enum class EGizmoAxis:uint8
 {
 	None,X,Y,Z
@@ -47,6 +48,8 @@ public:
 	UArrowComponent* GetAxisY() const { return AxisY; }
 	UArrowComponent* GetAxisZ() const { return AxisZ; }
 
+	void SetAxisHighlight(EGizmoAxis Axis);
+
 protected:
 
 	UPROPERTY(VisibleAnywhere)
@@ -66,6 +69,15 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UBoxComponent* HitBoxZ;
+
+	UPROPERTY(VisibleAnywhere)
+	UMaterialInstanceDynamic* MatX;
+
+	UPROPERTY(VisibleAnywhere)
+	UMaterialInstanceDynamic* MatY;
+
+	UPROPERTY(VisibleAnywhere)
+	UMaterialInstanceDynamic* MatZ;
 
 	UPROPERTY()
 	AActor* TargetActor;

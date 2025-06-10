@@ -36,7 +36,7 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 	FHitResult Hit;
 	FVector End = WorldOrigin + WorldDirection * 10000;
 	GetWorld()->LineTraceSingleByChannel(Hit, WorldOrigin, End, ECC_Visibility);
-	DrawDebugLine(GetWorld(), WorldOrigin, End, Hit.bBlockingHit? FColor::Green : FColor::Red, false, 2.0f, 0, 1.0f);
+	//DrawDebugLine(GetWorld(), WorldOrigin, End, Hit.bBlockingHit? FColor::Green : FColor::Red, false, 2.0f, 0, 1.0f);
 	if (!Hit.bBlockingHit || !Hit.GetComponent()) return;
 
 	
@@ -44,18 +44,21 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit: X Axis %s"), *Hit.GetComponent()->GetName());
 		Gizmo->SetActiveAxis(EGizmoAxis::X);
+		Gizmo->SetAxisHighlight(EGizmoAxis::X);
 		return;
 	}
 	else if (Hit.GetComponent()->ComponentHasTag("GizmoAxisY"))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit: Y Axis %s"), *Hit.GetComponent()->GetName());
 		Gizmo->SetActiveAxis(EGizmoAxis::Y);
+		Gizmo->SetAxisHighlight(EGizmoAxis::Y);
 		return;
 	}
 	else if (Hit.GetComponent()->ComponentHasTag("GizmoAxisZ"))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit: Z Axis %s"), *Hit.GetComponent()->GetName());
 		Gizmo->SetActiveAxis(EGizmoAxis::Z);
+		Gizmo->SetAxisHighlight(EGizmoAxis::Z);
 		return;
 	}
 
@@ -90,6 +93,7 @@ void AGizmosManager::HandleRelease()
 	if(Gizmo)
 	{
 		Gizmo->ClearAxis();
+		Gizmo->SetAxisHighlight(EGizmoAxis::None);
 	}
 }
 
