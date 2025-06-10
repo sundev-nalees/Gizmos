@@ -37,26 +37,41 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 	FVector End = WorldOrigin + WorldDirection * 10000;
 	GetWorld()->LineTraceSingleByChannel(Hit, WorldOrigin, End, ECC_Visibility);
 	DrawDebugLine(GetWorld(), WorldOrigin, End, Hit.bBlockingHit? FColor::Green : FColor::Red, false, 2.0f, 0, 1.0f);
-	if(Hit.bBlockingHit)
+	if (!Hit.bBlockingHit || !Hit.GetComponent()) return;
+
+	
+	if (Hit.GetComponent()->ComponentHasTag("GizmoAxisX"))
 	{
-		if(Hit.GetActor()->GetClass()->ImplementsInterface(UGizmoSelectableInterface::StaticClass()))
+		UE_LOG(LogTemp, Warning, TEXT("Hit: X Axis %s"), *Hit.GetComponent()->GetName());
+		Gizmo->SetActiveAxis(EGizmoAxis::X);
+		return;
+	}
+	else if (Hit.GetComponent()->ComponentHasTag("GizmoAxisY"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit: Y Axis %s"), *Hit.GetComponent()->GetName());
+		Gizmo->SetActiveAxis(EGizmoAxis::Y);
+		return;
+	}
+	else if (Hit.GetComponent()->ComponentHasTag("GizmoAxisZ"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit: Z Axis %s"), *Hit.GetComponent()->GetName());
+		Gizmo->SetActiveAxis(EGizmoAxis::Z);
+		return;
+	}
+
+
+	AActor* HitActor = Hit.GetActor();
+	if (HitActor && HitActor->GetClass()->ImplementsInterface(UGizmoSelectableInterface::StaticClass()))
+	{
+		if (IGizmoSelectableInterface* Interface = Cast<IGizmoSelectableInterface>(HitActor))
 		{
-			if(IGizmoSelectableInterface* Interface=Cast<IGizmoSelectableInterface>(Hit.GetActor()))
+			if (Interface->IsGizmoEnabled())
 			{
-				if(Interface->IsGizmoEnabled())
-				{
-					
-					SelectedActor = Hit.GetActor();
-					Gizmo->AttachToTarget(SelectedActor);
-				
-				}
+				SelectedActor = HitActor;
+				Gizmo->AttachToTarget(SelectedActor);
+				UE_LOG(LogTemp, Warning, TEXT("Selected actor: %s"), *HitActor->GetName());
 			}
 		}
-	}
-	else if(Hit.GetComponent())
-	{
-		// Detect which axis was clicked (custom logic needed)
-		Gizmo->SetActiveAxis(EGizmoAxis::X);
 	}
 }
 

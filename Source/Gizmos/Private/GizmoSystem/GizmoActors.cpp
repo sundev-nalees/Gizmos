@@ -13,16 +13,59 @@ AGizmoActors::AGizmoActors()
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
-	AxisX = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AxisX"));
-	AxisY = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AxisY"));
-	AxisZ = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AxisZ"));
+	AxisX = CreateDefaultSubobject<UArrowComponent>(TEXT("AxisX"));
+	AxisY = CreateDefaultSubobject<UArrowComponent>(TEXT("AxisY"));
+	AxisZ = CreateDefaultSubobject<UArrowComponent>(TEXT("AxisZ"));
 
 	AxisX->SetupAttachment(RootComponent);
 	AxisY->SetupAttachment(RootComponent);
 	AxisZ->SetupAttachment(RootComponent);
 
+	AxisX->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	AxisX->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	AxisX->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+
+	HitBoxX = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxX"));
+	HitBoxX->SetupAttachment(AxisX);
+	HitBoxX->SetBoxExtent(FVector(60.f, 10.f, 10.f));
+	HitBoxX->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
+	HitBoxX->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HitBoxX->SetCollisionResponseToAllChannels(ECR_Ignore);
+	HitBoxX->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	HitBoxX->ComponentTags.Add(FName("GizmoAxisX"));
+
+	AxisY->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	AxisY->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	AxisY->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+
+	HitBoxY = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxY"));
+	HitBoxY->SetupAttachment(AxisY);
+	HitBoxY->SetBoxExtent(FVector(60.f, 10.f, 10.f));
+	HitBoxY->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
+	HitBoxY->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HitBoxY->SetCollisionResponseToAllChannels(ECR_Ignore);
+	HitBoxY->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	HitBoxY->ComponentTags.Add(FName("GizmoAxisY"));
+
+	AxisZ->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	AxisZ->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	AxisZ->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+
+	HitBoxZ = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxZ"));
+	HitBoxZ->SetupAttachment(AxisZ);
+	HitBoxZ->SetBoxExtent(FVector(70.f, 10.f, 10.f));
+	HitBoxZ->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
+	HitBoxZ->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HitBoxZ->SetCollisionResponseToAllChannels(ECR_Ignore);
+	HitBoxZ->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	HitBoxZ->ComponentTags.Add(FName("GizmoAxisZ"));
+
 	ActiveAxis = EGizmoAxis::None;
 	TargetActor = nullptr;
+
+	SetupAxis(AxisX, FVector(1, 0, 0), FLinearColor::Red);
+	SetupAxis(AxisY, FVector(0, 1, 0), FLinearColor::Green);
+	SetupAxis(AxisZ, FVector(0, 0, 1), FLinearColor::Blue);
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +82,7 @@ void AGizmoActors::Tick(float DeltaTime)
 	
 	if(TargetActor)
 	{
+		
 		SetActorLocation(TargetActor->GetActorLocation());
 	}
 
@@ -46,9 +90,9 @@ void AGizmoActors::Tick(float DeltaTime)
 
 void AGizmoActors::AttachToTarget(AActor* Target)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hit Actor:hzxgfhs"));
+	
 	TargetActor = Target;
-	SetActorHiddenInGame(true);
+	SetActorHiddenInGame(false);
 }
 
 void AGizmoActors::SetActiveAxis(EGizmoAxis NewAxis)
@@ -61,24 +105,23 @@ void AGizmoActors::ClearAxis()
 	ActiveAxis = EGizmoAxis::None;
 }
 
-void AGizmoActors::SetupAxis(UStaticMeshComponent* Axis, FVector Direction, FLinearColor Color)
+void AGizmoActors::SetupAxis(UArrowComponent* Axis, const FVector& Direction, const FLinearColor& Color)	
 {
-	
-	static  ConstructorHelpers::FObjectFinder<UStaticMesh>Mesh(TEXT("/Engine/BasicShapes/Cylinder"));
-	
-	if(Mesh.Succeeded())
-	{
-		
-		Axis->SetStaticMesh(Mesh.Object);
-		Axis->SetWorldScale3D(FVector(100.f, 100.f, 2.0f));
-		Axis->SetRelativeRotation(Direction.Rotation());
-		Axis->SetCollisionProfileName(TEXT("BlockAll"));
-		Axis->SetMobility(EComponentMobility::Movable);
-		UMaterialInstanceDynamic* Mat = Axis->CreateAndSetMaterialInstanceDynamic(0);
-		if (Mat)Mat->SetVectorParameterValue("BaseColor", Color);
-		
-	
-	}
+	if (!Axis) return;
 
+	Axis->ArrowColor = FColor(Color.ToFColor(true));
+	Axis->ArrowSize = 2.0f; // Make it large enough to be visible
+	Axis->bIsScreenSizeScaled = true; // Optional: scales with screen size
+	Axis->SetRelativeRotation(Direction.Rotation());
+	Axis->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Axis->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	Axis->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+	Axis->SetHiddenInGame(false);
+
+	
+		
+		UE_LOG(LogTemp, Warning, TEXT("Hit Actor:hzxgfhs"));
+	
+	
 }
 

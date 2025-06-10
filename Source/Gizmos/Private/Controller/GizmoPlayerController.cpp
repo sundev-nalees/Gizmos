@@ -17,10 +17,6 @@ void AGizmoPlayerController::BeginPlay()
 	if(!GizmoManager)
 	{
 		GizmoManager = GetWorld()->SpawnActor<AGizmosManager>(AGizmosManager::StaticClass());
-		if (!GizmoManager)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Warning: Gizmo shaaaa!"));
-		}
 		
 	}
 }

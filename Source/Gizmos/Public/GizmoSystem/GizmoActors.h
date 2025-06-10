@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/ArrowComponent.h"
+#include "Components/BoxComponent.h"
 #include "GizmoActors.generated.h"
 
 UENUM()
@@ -41,22 +43,34 @@ public:
 
 	AActor* GetTarget()const { return TargetActor; }
 
+	UArrowComponent* GetAxisX() const { return AxisX; }
+	UArrowComponent* GetAxisY() const { return AxisY; }
+	UArrowComponent* GetAxisZ() const { return AxisZ; }
 
 protected:
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* AxisX;
+	UArrowComponent* AxisX;
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* AxisY;
+	UArrowComponent* AxisY;
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* AxisZ;
+	UArrowComponent* AxisZ;
+
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* HitBoxX;
+
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* HitBoxY;
+
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* HitBoxZ;
 
 	UPROPERTY()
 	AActor* TargetActor;
 
 	EGizmoAxis ActiveAxis;
 
-	void SetupAxis(UStaticMeshComponent* Axis, FVector Direction, FLinearColor Color);
+	void SetupAxis(UArrowComponent* Axis, const FVector& Direction, const FLinearColor& Color);
 };
