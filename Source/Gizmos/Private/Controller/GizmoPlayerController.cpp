@@ -39,7 +39,7 @@ void AGizmoPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("LeftClick", IE_Pressed, this, &AGizmoPlayerController::OnLeftMousePressed);
 	InputComponent->BindAction("LeftClick", IE_Released, this, &AGizmoPlayerController::OnLeftMouseReleased);
-	//InputComponent->BindAxis("Turn", this, &AGizmoPlayerController::OnMouseMoved);
+	
 }
 
 void AGizmoPlayerController::OnLeftMousePressed()

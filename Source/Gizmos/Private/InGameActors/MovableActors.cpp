@@ -25,3 +25,17 @@ void AMovableActors::Tick(float DeltaTime)
 
 }
 
+void AMovableActors::SetCollision(bool bEnabled)
+{
+	TInlineComponentArray<UPrimitiveComponent*> PrimitiveComponents(this);
+
+	for (UPrimitiveComponent* Prim : PrimitiveComponents)
+	{
+		// Change only the visibility channel
+		Prim->SetCollisionResponseToChannel(
+			ECC_Visibility,
+			bEnabled ? ECR_Block : ECR_Ignore
+		);
+	}
+}
+

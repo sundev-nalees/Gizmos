@@ -34,8 +34,10 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 {
 	
 	FHitResult Hit;
+	FHitResult HitBox;
 	FVector End = WorldOrigin + WorldDirection * 10000;
 	GetWorld()->LineTraceSingleByChannel(Hit, WorldOrigin, End, ECC_Visibility);
+	
 	//DrawDebugLine(GetWorld(), WorldOrigin, End, Hit.bBlockingHit? FColor::Green : FColor::Red, false, 2.0f, 0, 1.0f);
 	if (!Hit.bBlockingHit || !Hit.GetComponent()) return;
 
@@ -61,9 +63,37 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 		Gizmo->SetAxisHighlight(EGizmoAxis::Z);
 		return;
 	}
+	else if (Hit.GetComponent()->ComponentHasTag("GizmoPlaneXY"))
+	{
+		Gizmo->SetActiveAxis(EGizmoAxis::XY);
+		return;
+	}
+	else if (Hit.GetComponent()->ComponentHasTag("GizmoPlaneYZ"))
+	{
+		Gizmo->SetActiveAxis(EGizmoAxis::YZ);
+		return;
+	}	
+	else if (Hit.GetComponent()->ComponentHasTag("GizmoPlaneXZ"))
+	{
+		Gizmo->SetActiveAxis(EGizmoAxis::XZ);
+		return;
+	}
+	else if (Hit.GetComponent()->ComponentHasTag("GizmoFreeMove"))
+	{
+		Gizmo->SetActiveAxis(EGizmoAxis::FreeMove);
+		return;
+	}
+		
 
 
 	AActor* HitActor = Hit.GetActor();
+	if(SelectedActor!=HitActor)
+	{
+		if (IGizmoSelectableInterface* Interface = Cast<IGizmoSelectableInterface>(SelectedActor))
+		{
+			Interface->SetCollision(true);
+		}
+	}
 	if (HitActor && HitActor->GetClass()->ImplementsInterface(UGizmoSelectableInterface::StaticClass()))
 	{
 		if (IGizmoSelectableInterface* Interface = Cast<IGizmoSelectableInterface>(HitActor))
@@ -72,7 +102,8 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 			{
 				SelectedActor = HitActor;
 				Gizmo->AttachToTarget(SelectedActor);
-				UE_LOG(LogTemp, Warning, TEXT("Selected actor: %s"), *HitActor->GetName());
+				Interface->SetCollision(false);
+				
 			}
 		}
 	}
@@ -128,7 +159,18 @@ void AGizmosManager::UpdateTargetLocation(const FVector& CurrentWorldPos)
 	case EGizmoAxis::Z:
 		SelectedActor->AddActorWorldOffset(FVector(0, 0, Delta.Z));
 		break;
-
+	case EGizmoAxis::XY:
+		SelectedActor->AddActorWorldOffset(FVector(Delta.X, Delta.Y, 0));
+		break;
+	case EGizmoAxis::YZ:
+		SelectedActor->AddActorWorldOffset(FVector(0, Delta.Y, Delta.Z));
+		break;
+	case EGizmoAxis::XZ:
+		SelectedActor->AddActorWorldOffset(FVector(Delta.X, 0, Delta.Z));
+		break;
+	case EGizmoAxis::FreeMove:
+		SelectedActor->AddActorWorldOffset(FVector(Delta.X,Delta.Y, Delta.Z));
+		break;
 	default:
 		break;
 	}

@@ -64,6 +64,18 @@ protected:
 	UArrowComponent* AxisZ;
 
 	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* HandleXY;
+	
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* HandleYZ;
+	
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* HandleXZ;
+	
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* HandleFree;
+
+	UPROPERTY(VisibleAnywhere)
 	UBoxComponent* HitBoxX;
 
 	UPROPERTY(VisibleAnywhere)
@@ -72,14 +84,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UBoxComponent* HitBoxZ;
 
-	UPROPERTY(VisibleAnywhere)
-	UMaterialInstanceDynamic* MatX;
-
-	UPROPERTY(VisibleAnywhere)
-	UMaterialInstanceDynamic* MatY;
-
-	UPROPERTY(VisibleAnywhere)
-	UMaterialInstanceDynamic* MatZ;
 
 	UPROPERTY()
 	AActor* TargetActor;
@@ -87,4 +91,10 @@ protected:
 	EGizmoAxis ActiveAxis;
 
 	void SetupAxis(UArrowComponent* Axis, const FVector& Direction, const FLinearColor& Color);
+
+	void SetupHitBox(UBoxComponent* Axis);
+
+	void SetupFreeAxis();
+
+	void SetupPlainAxis(UStaticMeshComponent*HandlePlain,const FVector& Direction,const FRotator& Rotation,const FVector& WorldScale);
 };

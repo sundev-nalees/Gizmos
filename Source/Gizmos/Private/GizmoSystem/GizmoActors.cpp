@@ -16,61 +16,70 @@ AGizmoActors::AGizmoActors()
 	AxisX = CreateDefaultSubobject<UArrowComponent>(TEXT("AxisX"));
 	AxisY = CreateDefaultSubobject<UArrowComponent>(TEXT("AxisY"));
 	AxisZ = CreateDefaultSubobject<UArrowComponent>(TEXT("AxisZ"));
+	HandleXY = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HandleXY"));
+	HandleYZ = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HandleYZ"));
+	HandleXZ = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HandleXZ"));
 
-	AxisX->SetupAttachment(RootComponent);
+	HandleXY->ComponentTags.Add("GizmoPlaneXY");
+	HandleYZ->ComponentTags.Add("GizmoPlaneYZ");
+	HandleXZ->ComponentTags.Add("GizmoPlaneXY");
+
+	/*AxisX->SetupAttachment(RootComponent);
 	AxisY->SetupAttachment(RootComponent);
-	AxisZ->SetupAttachment(RootComponent);
+	AxisZ->SetupAttachment(RootComponent);*/
 
-	AxisX->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	AxisX->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	AxisX->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+	
 
 	HitBoxX = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxX"));
 	HitBoxX->SetupAttachment(AxisX);
-	HitBoxX->SetBoxExtent(FVector(60.f, 10.f, 10.f));
+	/*HitBoxX->SetBoxExtent(FVector(60.f, 10.f, 10.f));
 	HitBoxX->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
 	HitBoxX->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	HitBoxX->SetCollisionResponseToAllChannels(ECR_Ignore);
-	HitBoxX->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	HitBoxX->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block)*/;
 	HitBoxX->ComponentTags.Add(FName("GizmoAxisX"));
 
 
-	AxisY->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	AxisY->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	AxisY->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
 
 	HitBoxY = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxY"));
 	HitBoxY->SetupAttachment(AxisY);
-	HitBoxY->SetBoxExtent(FVector(60.f, 10.f, 10.f));
+	/*HitBoxY->SetBoxExtent(FVector(60.f, 10.f, 10.f));
 	HitBoxY->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
 	HitBoxY->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	HitBoxY->SetCollisionResponseToAllChannels(ECR_Ignore);
-	HitBoxY->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	HitBoxY->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);*/
 	HitBoxY->ComponentTags.Add(FName("GizmoAxisY"));
 
 	
 
-	AxisZ->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	AxisZ->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	AxisZ->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+	
 
 	HitBoxZ = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxZ"));
 	HitBoxZ->SetupAttachment(AxisZ);
-	HitBoxZ->SetBoxExtent(FVector(70.f, 10.f, 10.f));
+	/*HitBoxZ->SetBoxExtent(FVector(70.f, 10.f, 10.f));
 	HitBoxZ->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
 	HitBoxZ->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	HitBoxZ->SetCollisionResponseToAllChannels(ECR_Ignore);
-	HitBoxZ->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	HitBoxZ->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);*/
 	HitBoxZ->ComponentTags.Add(FName("GizmoAxisZ"));
 
-	
-
-	ActiveAxis = EGizmoAxis::None;
-	TargetActor = nullptr;
 
 	SetupAxis(AxisX, FVector(70, 0, 0), FLinearColor::Red);
 	SetupAxis(AxisY, FVector(0, 70, 0), FLinearColor::Green);
 	SetupAxis(AxisZ, FVector(0, 0, 70), FLinearColor::Blue);
+
+	SetupHitBox(HitBoxX);
+	SetupHitBox(HitBoxY);
+	SetupHitBox(HitBoxZ);
+
+	SetupPlainAxis(HandleXY, FVector(13, 19, 0), FRotator(0, 0, 0), FVector(0.4f));
+	SetupPlainAxis(HandleYZ, FVector(20, 1, 23), FRotator(-90, 90, 0), FVector(0.4f));
+	SetupPlainAxis(HandleXZ, FVector(0, 24, 22), FRotator(-90, 0, 0), FVector(0.4f));
+
+	SetupFreeAxis();
+
+	ActiveAxis = EGizmoAxis::None;
+	TargetActor = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -141,15 +150,61 @@ void AGizmoActors::SetAxisHighlight(EGizmoAxis Axis)
 void AGizmoActors::SetupAxis(UArrowComponent* Axis, const FVector& Direction, const FLinearColor& Color)	
 {
 	if (!Axis) return;
-
+	Axis->SetupAttachment(RootComponent);
 	Axis->ArrowColor = FColor(Color.ToFColor(true));
-	Axis->ArrowSize = 2.0f; // Make it large enough to be visible
-	Axis->bIsScreenSizeScaled = true; // Optional: scales with screen size
+	Axis->ArrowSize = 2.0f; 
+	Axis->bIsScreenSizeScaled = true;
 	Axis->SetRelativeRotation(Direction.Rotation());
-	Axis->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Axis->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	Axis->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+
 	Axis->SetHiddenInGame(false);
 	
+}
+
+void AGizmoActors::SetupHitBox(UBoxComponent* Axis)
+{
+	
+	Axis->SetBoxExtent(FVector(70.f, 10.f, 10.f));
+	Axis->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
+	Axis->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Axis->SetCollisionResponseToAllChannels(ECR_Ignore);
+	Axis->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+}
+
+void AGizmoActors::SetupFreeAxis()
+{
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMesh(TEXT("/Engine/BasicShapes/Sphere"));
+	if (SphereMesh.Succeeded())
+	{
+		HandleFree = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HandleFree"));
+		HandleFree->SetupAttachment(RootComponent);
+		HandleFree->SetStaticMesh(SphereMesh.Object);
+		HandleFree->SetRelativeLocation(FVector(0, 0, 0));
+		HandleFree->SetRelativeScale3D(FVector(0.3f));
+		HandleFree->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		HandleFree->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+		HandleFree->ComponentTags.Add("GizmoFreeMove");
+	}
+}
+
+void AGizmoActors::SetupPlainAxis(UStaticMeshComponent* HandlePlain, const FVector& Direction, const FRotator& Rotation, const FVector& WorldScale)
+{
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMesh(TEXT("/Engine/BasicShapes/Plane"));
+	
+
+	if (PlaneMesh.Succeeded())
+	{
+		
+		HandlePlain->SetupAttachment(RootComponent);
+		HandlePlain->SetStaticMesh(PlaneMesh.Object);
+		HandlePlain->SetRelativeLocation(Direction);
+		HandlePlain->SetRelativeRotation(Rotation);
+		HandlePlain->SetWorldScale3D(WorldScale);
+		HandlePlain->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		HandlePlain->SetCollisionResponseToAllChannels(ECR_Ignore);
+		HandlePlain->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	}
+
+	
+
 }
 

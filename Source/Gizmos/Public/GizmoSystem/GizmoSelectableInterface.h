@@ -24,5 +24,6 @@ class GIZMOS_API IGizmoSelectableInterface
 public:
 
 	virtual bool IsGizmoEnabled() const = 0;
+	virtual void SetCollision(bool condition)=0;
 
 };

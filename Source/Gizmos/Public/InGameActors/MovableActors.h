@@ -26,6 +26,8 @@ public:
 
 	virtual bool IsGizmoEnabled()const override { return bGizmoEnable; }
 
+	virtual void SetCollision(bool bEnabled) override;
+
 private:
 
 	bool bGizmoEnable = true;
