@@ -13,7 +13,9 @@
 UENUM()
 enum class EGizmoAxis:uint8
 {
-	None,X,Y,Z
+	None,X,Y,Z,
+	XY, YZ, XZ,
+	FreeMove
 };
 
 

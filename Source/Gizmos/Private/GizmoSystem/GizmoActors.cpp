@@ -68,9 +68,9 @@ AGizmoActors::AGizmoActors()
 	ActiveAxis = EGizmoAxis::None;
 	TargetActor = nullptr;
 
-	SetupAxis(AxisX, FVector(1, 0, 0), FLinearColor::Red);
-	SetupAxis(AxisY, FVector(0, 1, 0), FLinearColor::Green);
-	SetupAxis(AxisZ, FVector(0, 0, 1), FLinearColor::Blue);
+	SetupAxis(AxisX, FVector(70, 0, 0), FLinearColor::Red);
+	SetupAxis(AxisY, FVector(0, 70, 0), FLinearColor::Green);
+	SetupAxis(AxisZ, FVector(0, 0, 70), FLinearColor::Blue);
 }
 
 // Called when the game starts or when spawned
