@@ -22,32 +22,21 @@ AGizmoActors::AGizmoActors()
 
 	HandleXY->ComponentTags.Add("GizmoPlaneXY");
 	HandleYZ->ComponentTags.Add("GizmoPlaneYZ");
-	HandleXZ->ComponentTags.Add("GizmoPlaneXY");
+	HandleXZ->ComponentTags.Add("GizmoPlaneXZ");
 
-	/*AxisX->SetupAttachment(RootComponent);
-	AxisY->SetupAttachment(RootComponent);
-	AxisZ->SetupAttachment(RootComponent);*/
+	
 
 	
 
 	HitBoxX = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxX"));
 	HitBoxX->SetupAttachment(AxisX);
-	/*HitBoxX->SetBoxExtent(FVector(60.f, 10.f, 10.f));
-	HitBoxX->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
-	HitBoxX->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	HitBoxX->SetCollisionResponseToAllChannels(ECR_Ignore);
-	HitBoxX->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block)*/;
+	
 	HitBoxX->ComponentTags.Add(FName("GizmoAxisX"));
 
 
 
 	HitBoxY = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxY"));
 	HitBoxY->SetupAttachment(AxisY);
-	/*HitBoxY->SetBoxExtent(FVector(60.f, 10.f, 10.f));
-	HitBoxY->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
-	HitBoxY->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	HitBoxY->SetCollisionResponseToAllChannels(ECR_Ignore);
-	HitBoxY->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);*/
 	HitBoxY->ComponentTags.Add(FName("GizmoAxisY"));
 
 	
@@ -56,11 +45,6 @@ AGizmoActors::AGizmoActors()
 
 	HitBoxZ = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBoxZ"));
 	HitBoxZ->SetupAttachment(AxisZ);
-	/*HitBoxZ->SetBoxExtent(FVector(70.f, 10.f, 10.f));
-	HitBoxZ->SetRelativeLocation(FVector(60.f, 0.f, 0.f));
-	HitBoxZ->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	HitBoxZ->SetCollisionResponseToAllChannels(ECR_Ignore);
-	HitBoxZ->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);*/
 	HitBoxZ->ComponentTags.Add(FName("GizmoAxisZ"));
 
 
@@ -73,8 +57,8 @@ AGizmoActors::AGizmoActors()
 	SetupHitBox(HitBoxZ);
 
 	SetupPlainAxis(HandleXY, FVector(13, 19, 0), FRotator(0, 0, 0), FVector(0.4f));
-	SetupPlainAxis(HandleYZ, FVector(20, 1, 23), FRotator(-90, 90, 0), FVector(0.4f));
-	SetupPlainAxis(HandleXZ, FVector(0, 24, 22), FRotator(-90, 0, 0), FVector(0.4f));
+	SetupPlainAxis(HandleXZ, FVector(20, 1, 23), FRotator(-90, 90, 0), FVector(0.4f));
+	SetupPlainAxis(HandleYZ, FVector(0, 24, 22), FRotator(-90, 0, 0), FVector(0.4f));
 
 	SetupFreeAxis();
 
@@ -137,6 +121,23 @@ void AGizmoActors::SetAxisHighlight(EGizmoAxis Axis)
 	case EGizmoAxis::Z:
 		AxisZ->ArrowColor = FColor::Yellow;
 		break;
+	case EGizmoAxis::XY:
+		AxisX->ArrowColor = FColor::Yellow;
+		AxisY->ArrowColor = FColor::Yellow;
+		break;
+	case EGizmoAxis::YZ:
+		AxisZ->ArrowColor = FColor::Yellow;
+		AxisY->ArrowColor = FColor::Yellow;
+		break;
+	case EGizmoAxis::XZ:
+		AxisX->ArrowColor = FColor::Yellow;
+		AxisZ->ArrowColor = FColor::Yellow;
+		break;
+	case EGizmoAxis::FreeMove:
+		AxisX->ArrowColor = FColor::Yellow;
+		AxisY->ArrowColor = FColor::Yellow;
+		AxisZ->ArrowColor = FColor::Yellow;
+		break;
 	default:
 		break;
 	}
@@ -179,7 +180,7 @@ void AGizmoActors::SetupFreeAxis()
 		HandleFree->SetupAttachment(RootComponent);
 		HandleFree->SetStaticMesh(SphereMesh.Object);
 		HandleFree->SetRelativeLocation(FVector(0, 0, 0));
-		HandleFree->SetRelativeScale3D(FVector(0.3f));
+		HandleFree->SetRelativeScale3D(FVector(0.6f));
 		HandleFree->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		HandleFree->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 		HandleFree->ComponentTags.Add("GizmoFreeMove");

@@ -66,21 +66,25 @@ void AGizmosManager::HandelClick(FVector WorldOrigin, FVector WorldDirection)
 	else if (Hit.GetComponent()->ComponentHasTag("GizmoPlaneXY"))
 	{
 		Gizmo->SetActiveAxis(EGizmoAxis::XY);
+		Gizmo->SetAxisHighlight(EGizmoAxis::XY);
 		return;
 	}
 	else if (Hit.GetComponent()->ComponentHasTag("GizmoPlaneYZ"))
 	{
 		Gizmo->SetActiveAxis(EGizmoAxis::YZ);
+		Gizmo->SetAxisHighlight(EGizmoAxis::YZ);
 		return;
 	}	
 	else if (Hit.GetComponent()->ComponentHasTag("GizmoPlaneXZ"))
 	{
 		Gizmo->SetActiveAxis(EGizmoAxis::XZ);
+		Gizmo->SetAxisHighlight(EGizmoAxis::XZ);
 		return;
 	}
 	else if (Hit.GetComponent()->ComponentHasTag("GizmoFreeMove"))
 	{
 		Gizmo->SetActiveAxis(EGizmoAxis::FreeMove);
+		Gizmo->SetAxisHighlight(EGizmoAxis::FreeMove);
 		return;
 	}
 		
@@ -134,10 +138,6 @@ void AGizmosManager::SpawnGizmo()
 	FActorSpawnParameters Params;
 	Gizmo = GetWorld()->SpawnActor<AGizmoActors>(AGizmoActors::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, Params);
 	Gizmo->SetActorHiddenInGame(true);
-	if(!Gizmo)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("Warning: Gizmo Fucked"));
-	}
 }
 
 void AGizmosManager::UpdateTargetLocation(const FVector& CurrentWorldPos)
